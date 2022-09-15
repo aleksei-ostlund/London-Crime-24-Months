@@ -1,4 +1,4 @@
-/*calculate monthly averages by borough*/
+/* Calculate monthly averages by borough */
 
 WITH so_by_borough 
 AS
@@ -20,7 +20,7 @@ LEFT JOIN borough_population AS p ON s.borough = p.borough
 GROUP BY s.borough
 ORDER BY avg_per_100k DESC
 
-/*calculate the highest number of total incidents by borough and month*/
+/* Calculate the highest number of total incidents by borough and month */
 
 SELECT SUM(incidents) AS total_incidents, major, borough, 
 CONCAT(dateyear, "/", datemonth) AS yearmonth, datemonth
@@ -29,9 +29,9 @@ WHERE major = "Sexual Offences"
 GROUP BY yearmonth, borough
 ORDER BY total_incidents DESC
 
-/*combine rape and other sexual assaults into total for Barnet county*/
+/* Combine rape and other sexual assaults into total for Barnet */
 
-#combine year and month into one column#
+#combine year and month into one column
 SELECT SUM(incidents) AS total_incidents, major, borough,
 dateyear, datemonth,
 CONCAT(dateyear, "/", datemonth) AS yearmonth      
@@ -40,7 +40,7 @@ WHERE borough LIKE "%Barnet%" AND major LIKE "%sexual%"
 GROUP BY major, yearmonth                     
 ORDER BY dateyear ASC, datemonth ASC
 
-/* create column rating each month compared to average for Barnet*/
+/* Create column rating each month compared to average for Barnet */
 with barnet_so_averages AS
 
 (
@@ -121,7 +121,7 @@ total_incidents - LAG(total_incidents, 1) over (ORDER BY dateyear ASC, datemonth
 AS incident_change
 FROM total_barnet_so
 
-/* Calculate sexual assault running average for 2021 for Barnet */
+/* Calculate total sexual assault running average for 2021 for Barnet */
 with total_barnet_so AS 
 
 (
@@ -134,7 +134,7 @@ GROUP BY major, yearmonth
 ORDER BY dateyear asc, datemonth ASC
 )
 
-#Use 2021 as its the only complete year in last 24 months of data
+#use 2021 as its the only complete year in last 24 months of data
 SELECT major, borough, dateyear, datemonth,total_incidents,
 ROUND(AVG(total_incidents) over 
 (partition by dateyear ORDER BY dateyear ASC, datemonth ASC)
